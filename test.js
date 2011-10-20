@@ -4,10 +4,27 @@ var sys = require('util'),
       client = couchdb.createClient(80, 'seeds.iriscouch.com', process.argv[2], process.argv[3]),
       db = client.db('accessions');
 
-var url = "http://genebank.iita.org";
+var url = "http://genebank.iita.org",
+    nextLink;
+
+
+var mcpd = {
+    "IITA Accession Identifier": "ACCENUMB",
+    "Collection code": "COLLNUMB",
+    "Genus": "GENUS",
+    "Species": "SPECIES",
+    "Crop identifier": "CROPNAME",
+    "Collection date": "ACQDATE",
+    "Country of origin": "ORIGCTY",
+    "Latitude": "LATITUDE",
+    "Longitude": "LONGITUDE"
+};
 
 function accScraper(err, $) {
-    if (err) {throw err;}
+    if (err) {
+        console.log("Something went wrong loading an accession for this page"); 
+        return;
+    }
 
     var accession = {};
     $("body > div:last-child table tr").each(function(){
@@ -16,14 +33,21 @@ function accScraper(err, $) {
             key = children.eq(0).find("b").text().trim(),
             value = children.eq(1).text().trim();
 
+        if(mcpd[key])
+            key = mcpd[key];
+
         accession[key] = value;
     });
 
-    db.saveDoc(accession["IITA Accession Identifier"], accession, function(er, ok) {
+    accession["INSTCODE"] = "IITA";
+
+    db.saveDoc(accession["INSTCODE"] + "_" + accession["ACCENUMB"], accession, function(er, ok) {
+        /*
         if (er) //throw new Error(JSON.stringify(er));
             console.log("didn't save: "+ accession["IITA Accession Identifier"]+", because: "+ JSON.stringify(er));
         else
             console.log("added: "+ accession["IITA Accession Identifier"]);
+        */
     });
 }
 
@@ -38,18 +62,16 @@ function scrapeUrl(urlToScrape) {
 
             // get the accession data!
             scraper(link, accScraper);
-
-            // figure out if we're at the last accession on the page
-            // and go to the next page
-            if(idx == ($domAccessions.length-1)) {
-                var nextLink = $("a:contains('Next')").first().attr("href");
-                if(nextLink) { // go to next page
-                    scrapeUrl(url + "/browse/" + nextLink);
-                }
-            }
         });
+        nextLink = $("a:contains('Next')").first().attr("href"); // nextLink must return to stdout
     });
 }
 
-// start recursion
-scrapeUrl(url + "/browse");
+var pageToScrape = process.argv[4] || "";
+
+scrapeUrl(url + "/browse/" + pageToScrape);
+
+// when this process exists, output the nextLink
+process.on("exit", function() {
+    console.log("Next: "+nextLink);
+});
