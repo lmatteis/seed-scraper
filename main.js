@@ -15,7 +15,8 @@ function spawnProc(nextLink) {
         // only if "next" is not "undefined"
         if(next.indexOf("Next") == 0) { // only start new process when Next
             var n = next.replace("Next: ", "");
-            spawnProc(n);
+            if(n && n != "undefined")
+                spawnProc(n);
         }
     });
 }
