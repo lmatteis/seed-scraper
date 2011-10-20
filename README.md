@@ -2,4 +2,10 @@ Scrapes genebanks websites to fetch accession data and then puts them in a Couch
 
 Depends on:
 
-    npm install node-scraper
+- node.js (of course)
+- node-scraper
+- node-couchdb
+
+You can install these using `npm`.
+
+To start scraping just use `node main.js <couch-username> <couch-password>`
