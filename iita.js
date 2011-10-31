@@ -1,8 +1,5 @@
 var scraper = require('scraper');
-var sys = require('util'),
-      couchdb = require('felix-couchdb'),
-      client = couchdb.createClient(80, 'seeds.iriscouch.com', process.argv[2], process.argv[3]),
-      db = client.db('accessions');
+var db = require("./db.js");
 
 var url = "http://genebank.iita.org",
     nextLink;
