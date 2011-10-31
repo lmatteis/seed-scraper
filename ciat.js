@@ -7,7 +7,7 @@ function clean(str) {
 
 scraper(
     {
-       'uri': 'http://isa.ciat.cgiar.org/urg/showbsearchresults.do?pager.offset=0'
+       'uri': 'http://isa.ciat.cgiar.org/urg/showbsearchresults.do?pager.offset=90'
            , 'headers': {
 'User-Agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
 'Accept':  'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -23,15 +23,29 @@ scraper(
         if (err) {throw err}
 
         var $children = $("table.marcos").children(),
-            $head = $children.eq(2),
-            $th = $head.find("th");
+            $topcols = $children.eq(1).find("th"),
+            $cols = $children.eq(2).find("th");
 
-        var cols = []; // columns ordered by index
-        $th.each(function(idx){
-            var col = clean($(this).text().trim());
-            cols[idx] = col;
+        var cols = [],
+            offset = 0;
+        $topcols.each(function(idx){
+            var $this = $(this),
+                col = clean($this.text().trim()),
+                colspan = $this.attr("colspan"),
+                rowspan = $this.attr("rowspan");
+
+            if(rowspan) {
+                cols.push(col);
+            } else if(colspan) { // go and check the other tr
+                colspan = parseInt(colspan, 10);
+                for(var i=offset; i < (offset + colspan); i++) {
+                    col = clean($cols.eq(i).text().trim());
+                    cols.push(col);
+                }
+                offset += colspan;
+            }
+
         });
-        console.log($th.length);
 
         var ret = [];
 
@@ -40,12 +54,20 @@ scraper(
             var acc = {};
             var $cell = $(this).find("td");
             $cell.each(function(idx){
-                var val = clean($(this).text().trim()),
-                    c = cols[idx];
-                acc[c] = val;
+                var c = cols[idx];
+                if(c == "Trip report") {
+                    var val = $(this).find("img").attr("onclick");
+                } else if(c == "Seed/Plant") {
+                    var val = $(this).find("img").attr("src");
+                } else {
+                    var val = clean($(this).text().trim());
+                }
+                if(val)
+                    acc[c] = val;
             });
             ret.push(acc);
-            console.log($cell.length);
         });
+
+        console.log(ret);
     }
 );
