@@ -28,12 +28,11 @@ scraper(
        'uri': 'http://isa.ciat.cgiar.org/urg/showbsearchresults.do?pager.offset='+offset
            , 'headers': {
                 'User-Agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
-                'Accept':  'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
                 'Accept-Language': 'en-us,en;q=0.5',
                 'Accept-Encoding': 'gzip, deflate',
                 'Accept-Charset':  'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
-                'Referer': 'http://isa.ciat.cgiar.org/urg/showbsearchresults.do?pager.offset=10',
-                'Cookie': 'JSESSIONID=3FE1511064F1A7507B95462F751F5A21; __utma=148326703.1618406730.1320052661.1320075604.1320223121.6; __utmc=148326703; __utmz=148326703.1320052661.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); __utmb=148326703.10.10.1320223121'
+                'Referer': 'http://isa.ciat.cgiar.org/urg/showbsearchresults.do?pager.offset=0',
+                'Cookie': 'JSESSIONID=C57BC8F12DD3FF48369B9C28FE7D4371; __utma=148326703.1618406730.1320052661.1320228702.1320239085.8; __utmc=148326703; __utmz=148326703.1320052661.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); __utmb=148326703.7.10.1320239085'
            }
     }
     , function(err, $) {
@@ -64,8 +63,6 @@ scraper(
 
         });
 
-        var ret = [];
-
         var $rows = $("table.marcos tr.cuadro4");
         $rows.each(function() {
             var acc = {};
@@ -86,7 +83,7 @@ scraper(
             });
             acc["CROPNAME"] = "Bean";
             acc["INSTCODE"] = "CIAT";
-            //ret.push(acc);
+            //console.log(acc);
             db.saveDoc(acc["INSTCODE"] + "_" + acc["ACCENUMB"], acc, function(er, ok) {
                 //if (er) throw new Error(JSON.stringify(er));
             });
