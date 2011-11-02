@@ -1,5 +1,5 @@
 var scraper = require('scraper');
-var db = require("./db.js");
+var db = require("./couch-client.js").db("test");
 
 var url = "http://genebank.iita.org",
     nextLink;
