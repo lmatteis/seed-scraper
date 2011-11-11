@@ -26,7 +26,7 @@ function iita() {
 }
 
 function ciat() {
-    var offset = 0;
+    var offset = 15860;
     function spawnProc() {
         console.log("Creating process with offset: "+offset);
         var test = spawn("node", ["ciat.js", process.argv[2], process.argv[3], offset]);

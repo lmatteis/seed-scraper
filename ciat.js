@@ -34,7 +34,7 @@ scraper(
                 'Accept-Encoding': 'gzip, deflate',
                 'Accept-Charset':  'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
                 'Referer': 'http://isa.ciat.cgiar.org/urg/showbsearchresults.do?pager.offset=0',
-                'Cookie': 'JSESSIONID=DCAD1180DB0E84912A4DB755585EFC06'
+                'Cookie': 'JSESSIONID=9E17B090A6DD1E8056064E5FA8A20150'
            },
            'encoding': "binary"
     }
