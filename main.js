@@ -45,4 +45,24 @@ function ciat() {
     spawnProc();
 }
 
-ciat();
+function icrisat() {
+  var param = 1;
+  function spawnProc() {
+    console.log("Creating process with param: "+param);
+    var test = spawn("node", ["icrisat_icarda.js", process.argv[2], process.argv[3], param]);
+
+    param++;
+      
+    test.stdout.on("data", function(data) {
+        var next = trim(data.toString());
+        if(next.indexOf("Next") == 0) { // only start new process when Next
+            spawnProc();
+        }
+    });
+  }
+
+  // start recursion
+  spawnProc();
+}
+
+icrisat();
